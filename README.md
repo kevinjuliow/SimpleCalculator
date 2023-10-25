@@ -18,10 +18,12 @@ operations like addition, subtraction, multiplication, and division. The applica
 
 - Java Development Kit (JDK): You need to have Java installed on your system to run this application.
 
+### Preview
+<img src="./Preview.png" width="500" height="500">
+
 ### Installation
 Clone the repository to your local machine:
 
    ```bash
    git clone https://github.com/kevinjuliow/SimpleCalculator.git
-
 
