@@ -2,7 +2,10 @@ package org.example.Calculator;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.CompactNumberFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -239,14 +242,14 @@ public class Calculator extends JFrame {
         buttonTimes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                results.setText(results.getText() + "x");
+                if (results.getText().length() != 0) results.setText(results.getText() + "x");
             }
         });
 
         buttonDivide.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                results.setText(results.getText() + "/");
+                if (results.getText().length() != 0) results.setText(results.getText() + "/");
             }
         });
 
@@ -265,8 +268,12 @@ public class Calculator extends JFrame {
                     handleMath(mathResults , results , numbers , operators);
                 }else if (c == '+') results.setText(results.getText() + c);
                  else if (c == '-') results.setText(results.getText() + c);
-                 else if (c == '/') results.setText(results.getText() + c);
-                 else if (c == 'x' || c == '*') results.setText(results.getText() + 'x');
+                 else if (c == '/'){
+                     if (results.getText().length() != 0) results.setText(results.getText() + "/");
+                 }
+                 else if (c == 'x' || c == '*'){
+                     if (results.getText().length() != 0) results.setText(results.getText() + "x");
+                 }
                  else if (c == '\n') results.setText(mathResults.getText());
                  else if (c == 'c'){
                     results.setText("");
@@ -279,18 +286,20 @@ public class Calculator extends JFrame {
 
     }
     public void handleMath (JTextField mathResults , JTextField results , Queue<Double> numbers , Queue<Character> operators){
+
         String input = results.getText();
+        char firstInput = input.charAt(0);
         String number = "";
 
         for (char c : input.toCharArray()) {
             if (Character.isDigit(c) || c == '.') number += c;
-             else if (!number.isEmpty()) {
+            else if (c == ',') continue;
+            else if (!number.isEmpty()){
                 numbers.add(Double.parseDouble(number));
                 operators.add(c);
                 number = "";
             }
         }
-
         if (!number.isEmpty()) {
             numbers.add(Double.parseDouble(number));
         }
@@ -301,7 +310,7 @@ public class Calculator extends JFrame {
             char operator = operators.poll();
 
             if (operator == '+') finalResult += nextNumber;
-            else if (operator == '-')finalResult -= nextNumber;
+            else if (operator == '-') finalResult -= nextNumber;
             else if (operator == 'x') finalResult *= nextNumber;
             else if (operator == '/') {
                 if (nextNumber == 0){
@@ -311,12 +320,13 @@ public class Calculator extends JFrame {
                 else finalResult /= nextNumber;
             }
         }
+
+        Math.round(finalResult);
         String formattedResult = handleNumberFormat(finalResult);
         mathResults.setText(formattedResult);
     }
-    public String handleNumberFormat(double results){
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setGroupingUsed(true);
-        return numberFormat.format(results) ;
+    public String handleNumberFormat(double number) {
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        return df.format(number);
     }
 }
